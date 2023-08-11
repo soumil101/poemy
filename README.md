@@ -1,0 +1,2 @@
+# transcriptor
+AI Video Transcriptor
