@@ -13,7 +13,7 @@ openai.api_key = os.getenv("OPENAI_API_KEY")
 
 # app framework
 st.title("Playing around with LangChain")
-st.title("Poem to Haiku")
+st.title("Poem and Haiku")
 prompt = st.text_input('Pick a topic')
 
 # templates
@@ -58,6 +58,3 @@ if prompt:
 
     with st.expander("Haiku History"):
         st.info(haiku_memory.buffer)
-
-    with st.expander("Wikipedia Research"):
-        st.info(wikipedia_research)
