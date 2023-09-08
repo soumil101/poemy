@@ -7,7 +7,6 @@ from langchain.llms import OpenAI
 from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain, SequentialChain
 from langchain.memory import ConversationBufferMemory
-from langchain.utilities import WikipediaAPIWrapper
 
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
@@ -22,8 +21,8 @@ title_template = PromptTemplate(
     template='write a poem about {topic}'
 )
 script_template = PromptTemplate(
-    input_variables = ['poem', 'wikipedia_research'],
-    template='now turn {poem} into a haiku while leveraging this wikipedia research: {wikipedia_research}'
+    input_variables = ['poem'],
+    template='now turn {poem} into a haiku with 5-7-5 syllables'
 )
 
 # memory
@@ -35,15 +34,13 @@ llm = OpenAI(temperature=0.9)
 poem_chain = LLMChain(llm=llm, prompt=title_template, verbose=True, output_key='poem', memory=poem_memory)
 haiku_chain = LLMChain(llm=llm, prompt=script_template, verbose=True, output_key='haiku', memory=haiku_memory)
 
-wiki = WikipediaAPIWrapper()
 
 # show output on screen
 if prompt:   
     st.markdown('---')
 
     poem = poem_chain.run(topic=prompt)
-    wikipedia_research = wiki.run(prompt)
-    haiku = haiku_chain.run(poem=poem, wikipedia_research=wikipedia_research)
+    haiku = haiku_chain.run(poem=poem)
 
     st.write('**Here is your poem:**')
     st.write(poem)
@@ -52,9 +49,3 @@ if prompt:
 
     st.write('**Here is your haiku:**')
     st.write(haiku)
-
-    with st.expander("Poem History"):
-        st.info(poem_memory.buffer)
-
-    with st.expander("Haiku History"):
-        st.info(haiku_memory.buffer)
