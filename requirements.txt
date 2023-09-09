@@ -1,4 +1,4 @@
-langchain==0.0.261
+langchain==0.0.285
 openai==0.27.8
+python-dotenv==1.0.0
 streamlit==1.25.0
-wikipedia==1.4.0
