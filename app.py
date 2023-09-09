@@ -1,5 +1,7 @@
 import os
 import openai
+from dotenv import load_dotenv
+import textwrap
 
 import streamlit as st
 
@@ -8,11 +10,15 @@ from langchain.prompts import PromptTemplate
 from langchain.chains import LLMChain, SequentialChain
 from langchain.memory import ConversationBufferMemory
 
+load_dotenv()
+
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
+st.set_page_config(page_title='Poemy', page_icon='🪶', layout='wide')
+
 # app framework
-st.title("Playing around with LangChain")
-st.title("Poem and Haiku")
+st.title("Meet Poemy")
+st.subheader("Poemy will generate a poem and a haiku for you. Just give it a topic.")
 prompt = st.text_input('Pick a topic')
 
 # templates
@@ -34,6 +40,21 @@ llm = OpenAI(temperature=0.9)
 poem_chain = LLMChain(llm=llm, prompt=title_template, verbose=True, output_key='poem', memory=poem_memory)
 haiku_chain = LLMChain(llm=llm, prompt=script_template, verbose=True, output_key='haiku', memory=haiku_memory)
 
+def format_haiku(haiku):
+    # Split the haiku into lines with 5, 7, and 5 syllables
+    syllable_counts = [5, 7, 5]
+    haiku_lines = []
+    start = 0
+
+    for count in syllable_counts:
+        end = start + count
+        haiku_lines.append(haiku[start:end])
+        start = end
+
+    # Join the lines with line breaks
+    formatted_haiku = "\n".join(haiku_lines)
+
+    return formatted_haiku
 
 # show output on screen
 if prompt:   
@@ -48,4 +69,9 @@ if prompt:
     st.markdown('---')
 
     st.write('**Here is your haiku:**')
+    formatted_haiku = format_haiku(haiku)
     st.write(haiku)
+
+st.markdown('---')
+
+"built with langchain"
